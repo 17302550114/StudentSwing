@@ -34,7 +34,7 @@ public class StudentServiceImpl implements StudentService {
             sql.setLength(0);
             sql.append("select count(*) from student");
             if (request.getSearchKey()!=null && !"".equals(request.getSearchKey().trim())){
-                sql.append("where name  like '%"+request.getSearchKey().trim()+"%");
+                sql.append(" where name like '%"+request.getSearchKey().trim()+"%'");
             }
             ps = conn.prepareStatement(sql.toString());
             rs = ps.executeQuery();

@@ -31,8 +31,8 @@ public class MainView extends JFrame {
     JButton searchBtn = new JButton("SEARCH");
 
     JPanel southPanel = new JPanel();
-    JButton preBtn = new JButton("PRE");
-    JButton nextBtn = new JButton("PNEXT");
+    static JButton preBtn = new JButton("PRE");
+    static JButton nextBtn = new JButton("PNEXT");
 
     static MainViewTable mainViewTable = new MainViewTable();
 
@@ -65,24 +65,25 @@ public class MainView extends JFrame {
     }
 
     private void LayoutCenter(Container contentPane) {
-        Vector<Vector<Object>> data = getVectors();
-        System.out.println(data);
+        TableDTO tableDTO = getTableDTO();
+        System.out.println(tableDTO.getData());
 
-        MainViewTableModel mainViewTableModel = MainViewTableModel.assembleMode1(data);
+        MainViewTableModel mainViewTableModel = MainViewTableModel.assembleMode1(tableDTO.getData());
         mainViewTable.setDataModel(mainViewTableModel);
         mainViewTable.renderRule();
         JScrollPane jScrollPane = new JScrollPane(mainViewTable);
         contentPane.add(jScrollPane, BorderLayout.CENTER);
+        showPreNext(tableDTO.getTatalCount());
     }
 
-    private static Vector<Vector<Object>> getVectors() {
+    private static TableDTO getTableDTO() {
         StudentService studentService = new StudentServiceImpl();
         StudnetRequest request = new StudnetRequest();
         request.setPageNow(pageNow);
         request.setPageSize(pageSize);
         request.setSearchKey(searchTxt.getText().trim());
         TableDTO tableDTO = studentService.retrieveStudents(request);
-        return tableDTO.getData();
+        return tableDTO;
     }
 
     private void layoutSouth(Container contentPane) {
@@ -92,6 +93,28 @@ public class MainView extends JFrame {
         southPanel.add(nextBtn);
         contentPane.add(southPanel, BorderLayout.SOUTH);
     }
+
+    private static void showPreNext(int tatalCount) {
+        if (pageNow == 1) {
+            preBtn.setVisible(false);
+        } else {
+            preBtn.setVisible(true);
+        }
+        int pageCount = 0;//total page
+        if (tatalCount % pageSize == 0){
+            pageCount = tatalCount /pageSize;
+        }
+        else {
+            pageCount = tatalCount / pageSize +1;
+        }
+        if (pageNow == pageCount){
+            nextBtn.setVisible(false);
+        }else {
+            nextBtn.setVisible(true);
+        }
+
+    }
+
 
     private void layoutNorth(Container contentPane) {
 
@@ -106,8 +129,6 @@ public class MainView extends JFrame {
         northPanel.add(deleteBtn);
         northPanel.add(searchTxt);
         northPanel.add(searchBtn);
-
-
         contentPane.add(northPanel, BorderLayout.NORTH);
     }
 
@@ -124,9 +145,11 @@ public class MainView extends JFrame {
     }
 
     public static void reloadTable() {
-        Vector<Vector<Object>> data = getVectors();
+        TableDTO tableDTO = getTableDTO();
+        Vector<Vector<Object>> data = tableDTO.getData();
         MainViewTableModel.updateModel(data);
         mainViewTable.renderRule();
+        showPreNext(tableDTO.getTatalCount());
         System.out.println(data);
     }
 }
