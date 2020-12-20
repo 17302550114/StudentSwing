@@ -1,6 +1,8 @@
 package com.geng.handler;
 
+import com.geng.student.view.AddStudentView;
 import com.geng.student.view.MainView;
+import com.geng.student.view.UpdateStudentView;
 import com.sun.deploy.association.Action;
 import sun.applet.Main;
 
@@ -19,9 +21,9 @@ public class MainViewhandle implements ActionListener {
         JButton jButton = (JButton)e.getSource();
         String text = jButton.getText();
         if ("ADD".equals(text)){
-            System.out.printf("111111");
-
+            new AddStudentView(mainView);
         }else if ("UPDATE".equals(text)){
+            new UpdateStudentView(mainView);
 
         }else if ("DELETE".equals(text)){
 
